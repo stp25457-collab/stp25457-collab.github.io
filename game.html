@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมเป่ายิ้งฉุบ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: relative;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .player-name {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 40px 0;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 40px;
+            margin: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 20px;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .battle-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0;
+            min-height: 200px;
+        }
+
+        .player-choice, .computer-choice {
+            text-align: center;
+            flex: 1;
+        }
+
+        .vs {
+            flex: 0.5;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .choice-display {
+            font-size: 8rem;
+            margin: 20px 0;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .choice-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .choice-btn {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            font-size: 4rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            min-width: 100px;
+            min-height: 100px;
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #7c8ef5, #8a5cb8);
+        }
+
+        .choice-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .result {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 30px 0;
+            min-height: 60px;
+            padding: 20px;
+            border-radius: 15px;
+            transition: all 0.5s ease;
+        }
+
+        .result.win {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+        }
+
+        .result.lose {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            box-shadow: 0 0 30px rgba(244, 67, 54, 0.5);
+        }
+
+        .result.tie {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            box-shadow: 0 0 30px rgba(255, 152, 0, 0.5);
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #FF6B6B, #FF5252);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        }
+
+        .instructions {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .choice-btn { font-size: 3rem; min-width: 80px; min-height: 80px; }
+            .choice-display { font-size: 6rem; }
+            .battle-area { flex-direction: column; gap: 20px; }
+            .vs { order: 1; }
+            .player-name { position: static; margin: 10px auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="player-name">👑 Orawanya Grontim</div>
+        <h1>🎮 เกมเป่ายิ้งฉุบ 🎮</h1>
+    </div>
+
+    <div class="game-container">
+        <div class="score-board">
+            <div class="score">
+                <div>คุณ</div>
+                <div class="score-number" id="player-score">0</div>
+            </div>
+            <div class="score">
+                <div>คอมพิวเตอร์</div>
+                <div class="score-number" id="computer-score">0</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            เลือกการเคลื่อนไหวของคุณ! 🎯
+        </div>
+
+        <div class="choice-buttons">
+            <button class="choice-btn" onclick="playGame('rock')" title="ค้อน">🪨</button>
+            <button class="choice-btn" onclick="playGame('paper')" title="กระดาษ">📄</button>
+            <button class="choice-btn" onclick="playGame('scissors')" title="กรรไกร">✂️</button>
+        </div>
+
+        <div class="battle-area">
+            <div class="player-choice">
+                <div>คุณ</div>
+                <div class="choice-display" id="player-display">❓</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="computer-choice">
+                <div>คอมพิวเตอร์</div>
+                <div class="choice-display" id="computer-display">❓</div>
+            </div>
+        </div>
+
+        <div class="result" id="result"></div>
+
+        <div style="text-align: center;">
+            <button class="reset-btn" onclick="resetGame()">🔄 เริ่มเกมใหม่</button>
+        </div>
+    </div>
+
+    <script>
+        let playerScore = 0;
+        let computerScore = 0;
+        
+        const choices = {
+            rock: { emoji: '🪨', name: 'ค้อน' },
+            paper: { emoji: '📄', name: 'กระดาษ' },
+            scissors: { emoji: '✂️', name: 'กรรไกร' }
+        };
+
+        function getComputerChoice() {
+            const choiceArray = Object.keys(choices);
+            return choiceArray[Math.floor(Math.random() * choiceArray.length)];
+        }
+
+        function determineWinner(player, computer) {
+            if (player === computer) return 'tie';
+            
+            if (
+                (player === 'rock' && computer === 'scissors') ||
+                (player === 'paper' && computer === 'rock') ||
+                (player === 'scissors' && computer === 'paper')
+            ) {
+                return 'win';
+            }
+            return 'lose';
+        }
+
+        function playGame(playerChoice) {
+            const computerChoice = getComputerChoice();
+            
+            // Show countdown animation
+            showCountdown(() => {
+                // Display choices
+                document.getElementById('player-display').textContent = choices[playerChoice].emoji;
+                document.getElementById('computer-display').textContent = choices[computerChoice].emoji;
+                
+                // Determine winner
+                const result = determineWinner(playerChoice, computerChoice);
+                const resultElement = document.getElementById('result');
+                
+                // Update scores
+                if (result === 'win') {
+                    playerScore++;
+                    resultElement.textContent = `🎉 คุณชนะ! ${choices[playerChoice].name} เอาชนะ ${choices[computerChoice].name}`;
+                    resultElement.className = 'result win';
+                } else if (result === 'lose') {
+                    computerScore++;
+                    resultElement.textContent = `😅 คุณแพ้! ${choices[computerChoice].name} เอาชนะ ${choices[playerChoice].name}`;
+                    resultElement.className = 'result lose';
+                } else {
+                    resultElement.textContent = `🤝 เสมอ! ทั้งคู่เลือก ${choices[playerChoice].name}`;
+                    resultElement.className = 'result tie';
+                }
+                
+                // Update score display
+                document.getElementById('player-score').textContent = playerScore;
+                document.getElementById('computer-score').textContent = computerScore;
+            });
+        }
+
+        function showCountdown(callback) {
+            const playerDisplay = document.getElementById('player-display');
+            const computerDisplay = document.getElementById('computer-display');
+            const resultElement = document.getElementById('result');
+            
+            resultElement.textContent = '';
+            resultElement.className = 'result';
+            
+            let count = 3;
+            const countInterval = setInterval(() => {
+                if (count > 0) {
+                    playerDisplay.textContent = count;
+                    computerDisplay.textContent = count;
+                    count--;
+                } else {
+                    clearInterval(countInterval);
+                    callback();
+                }
+            }, 500);
+        }
+
+        function resetGame() {
+            playerScore = 0;
+            computerScore = 0;
+            document.getElementById('player-score').textContent = '0';
+            document.getElementById('computer-score').textContent = '0';
+            document.getElementById('player-display').textContent = '❓';
+            document.getElementById('computer-display').textContent = '❓';
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = 'result';
+        }
+
+        // Add some sparkle effects
+        function createSparkles() {
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.textContent = '✨';
+                    sparkle.style.position = 'fixed';
+                    sparkle.style.left = Math.random() * window.innerWidth + 'px';
+                    sparkle.style.top = Math.random() * window.innerHeight + 'px';
+                    sparkle.style.fontSize = '2rem';
+                    sparkle.style.pointerEvents = 'none';
+                    sparkle.style.zIndex = '1000';
+                    sparkle.style.animation = 'sparkle 2s ease-out forwards';
+                    
+                    document.body.appendChild(sparkle);
+                    
+                    setTimeout(() => {
+                        sparkle.remove();
+                    }, 2000);
+                }, i * 200);
+            }
+        }
+
+        // Add sparkle animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% { opacity: 1; transform: scale(0) rotate(0deg); }
+                50% { opacity: 1; transform: scale(1) rotate(180deg); }
+                100% { opacity: 0; transform: scale(0) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add sparkles periodically
+        setInterval(createSparkles, 5000);
+    </script>
+</body>
+</html>
